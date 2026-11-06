@@ -1,44 +1,58 @@
 # VelysDrone
 
-Plateforme d'investissement dans une flotte de drones — Afrique de l'Ouest.
+Plateforme d'investissement drones — https://VelysDrone.vercel.app
 
-**Devise :** XOF  
-**Dépôt min :** 3 000 XOF  
-**Retrait min :** 4 000 XOF  
+**Devise :** XOF | **Dépôt min :** 3 000 | **Retrait min :** 4 000
+
+## URLs importantes
+
+| Service | URL |
+|---------|-----|
+| Site | https://VelysDrone.vercel.app |
+| Supabase API | https://sfbomfhtepgffurzmoji.supabase.co |
+| Dépôt (Edge) | https://sfbomfhtepgffurzmoji.supabase.co/functions/v1/saspay-deposit |
+| Retrait (Edge) | https://sfbomfhtepgffurzmoji.supabase.co/functions/v1/saspay-withdraw |
+| **Webhook SasPay** | https://sfbomfhtepgffurzmoji.supabase.co/functions/v1/saspay-webhook |
+
+## Configuration manuelle obligatoire
+
+### 1. SasPay → Webhook
+1. Aller sur https://app.saspay.me → Développeur → Webhooks
+2. Créer un webhook avec l'URL :
+   ```
+   https://sfbomfhtepgffurzmoji.supabase.co/functions/v1/saspay-webhook
+   ```
+3. S'abonner aux événements :
+   - `transaction.success`
+   - `transaction.failed`
+   - `transaction.cancelled`
+4. Copier le **signing_secret** immédiatement
+5. (Optionnel) Dans Supabase → Edge Functions → Secrets :
+   - `SASPAY_WEBHOOK_SECRET` = ce signing_secret
+
+### 2. SasPay → Whitelist IP (retraits)
+1. Développeur → IP autorisées
+2. Ajouter les IP sortantes Supabase (région eu-west-3)
+3. Doc Supabase : https://supabase.com/docs/guides/functions/network-restrictions
+   Ou tester un retrait et regarder l'IP dans les logs d'erreur SasPay
+
+### 3. Secrets Supabase (recommandé)
+Project Settings → Edge Functions → Secrets :
+- `SASPAY_API_KEY` = sk_live_...
+- `SASPAY_WEBHOOK_SECRET` = (copié à l'étape 1)
+
+### 4. Vercel
+- Projet lié au repo GitHub `princeau-web/aethercompute`
+- Domaine : VelysDrone.vercel.app
+- Pas de variable d'env frontend nécessaire (clé côté serveur uniquement)
 
 ## Règles métier
-
-- À l'inscription le solde est **0 XOF**
-- L'utilisateur ne peut investir dans un drone que si son solde ≥ prix du drone
-- Sinon le bouton l'envoie vers le dépôt
-
-## Flotte (6 niveaux)
-
-| Drone | Investissement | Revenu / jour | Cycle | Total |
-|-------|----------------|---------------|-------|-------|
-| VelysDrone Mini | 3 000 | 2 050 | 2 j | 4 100 |
-| VelysDrone Air | 10 000 | 1 200 | 18 j | 21 600 |
-| VelysDrone Pro | 30 000 | 3 500 | 30 j | 105 000 |
-| VelysDrone Max | 80 000 | 9 000 | 60 j | 540 000 |
-| VelysDrone Elite | 150 000 | 18 000 | 90 j | 1 620 000 |
-| VelysDrone Ultimate | 300 000 | 45 000 | 180 j | 8 100 000 |
+- Solde initial = 0
+- Investir uniquement si solde ≥ prix du drone
+- Sinon → écran Dépôt
 
 ## Stack
-
-- Frontend HTML + Tailwind
-- Supabase projet `aethercompute` (`sfbomfhtepgffurzmoji`)
-- Paiements : SasPay (softpay + payout) via Edge Functions
-
-## Edge Functions
-
-- `saspay-deposit` — encaissement
-- `saspay-withdraw` — retrait
-
-## Lancer
-
-```bash
-python3 -m http.server 8080
-```
+Frontend HTML + Tailwind · Supabase · SasPay Edge Functions
 
 ---
 © 2026 VelysDrone
