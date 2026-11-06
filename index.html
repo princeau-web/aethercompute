@@ -1,1 +1,382 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>VelysDrone</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' },
+            dark: { 800: '#141a21', 850: '#0f1419', 900: '#0a0e13', 950: '#06090c' }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { background: #06090c; padding-bottom: 72px; }
+    .glass { background: rgba(15,20,25,0.75); border: 1px solid rgba(16,185,129,0.12); }
+    .btn-primary { background: linear-gradient(135deg, #059669, #10b981); }
+    .btn-primary:hover { box-shadow: 0 0 18px rgba(16,185,129,0.35); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,14,19,0.95); backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(16,185,129,0.15);
+    }
+    .nav-item.active { color: #34d399; }
+    .nav-item.active svg { stroke: #34d399; }
+    .product-card {
+      background: linear-gradient(145deg, rgba(15,20,25,0.9), rgba(6,9,12,0.95));
+      border: 1px solid rgba(16,185,129,0.15);
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+  </style>
+</head>
+<body class="font-sans text-white antialiased min-h-screen">
+
+  <div id="screen-home" class="screen active">
+    <header class="sticky top-0 z-50 glass px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center font-bold text-sm">V</div>
+        <span class="font-semibold text-lg tracking-tight">VelysDrone</span>
+      </div>
+    </header>
+
+    <section class="px-4 pt-5 pb-4">
+      <div class="glass rounded-2xl p-5">
+        <div class="text-center mb-4">
+          <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Solde actuel (XOF)</div>
+          <div id="balance" class="text-3xl font-bold text-brand-400">0.00</div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="showScreen('deposit')" class="btn-primary py-3 rounded-xl text-sm font-semibold">Dépôt</button>
+          <button onclick="showScreen('withdraw')" class="bg-white/5 border border-white/10 py-3 rounded-xl text-sm font-semibold hover:bg-white/10 transition">Retrait</button>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-center">
+          <div class="bg-dark-900/60 rounded-xl py-3">
+            <div class="text-[10px] text-gray-500 uppercase">Revenus d'aujourd'hui</div>
+            <div id="todayIncome" class="text-lg font-semibold text-brand-400">0.00</div>
+          </div>
+          <div class="bg-dark-900/60 rounded-xl py-3">
+            <div class="text-[10px] text-gray-500 uppercase">Revenus totaux</div>
+            <div id="totalIncome" class="text-lg font-semibold">0.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-4 pb-3">
+      <h2 class="text-base font-semibold">Flotte de drones</h2>
+      <p class="text-xs text-gray-500 mt-0.5">Investissez dans un drone et générez des revenus quotidiens</p>
+    </section>
+
+    <section class="px-4 space-y-4 pb-8" id="productsList"></section>
+  </div>
+
+  <div id="screen-deposit" class="screen">
+    <header class="sticky top-0 z-50 glass px-4 py-3 flex items-center gap-3">
+      <button onclick="showScreen('home')" class="text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="font-semibold text-lg">Dépôt</span>
+    </header>
+    <div class="px-4 pt-6">
+      <div class="glass rounded-2xl p-5 space-y-4">
+        <p class="text-sm text-gray-400">Minimum de dépôt : <span class="text-brand-400 font-semibold">3 000 XOF</span></p>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Pays</label>
+          <select id="dep-country" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white focus:outline-none focus:border-brand-500">
+            <option value="CI">Côte d'Ivoire</option>
+            <option value="BJ">Bénin</option>
+            <option value="SN">Sénégal</option>
+            <option value="TG">Togo</option>
+            <option value="GA">Gabon</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Numéro de téléphone</label>
+          <input id="dep-phone" type="tel" placeholder="07 12 34 56 78" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Email</label>
+          <input id="dep-email" type="email" placeholder="email@exemple.com" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Montant (XOF)</label>
+          <input id="dep-amount" type="number" min="3000" placeholder="3000" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500" />
+        </div>
+        <button onclick="submitDeposit()" class="w-full btn-primary py-3.5 rounded-xl font-semibold">Confirmer le dépôt</button>
+        <p id="dep-msg" class="text-sm text-center hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-withdraw" class="screen">
+    <header class="sticky top-0 z-50 glass px-4 py-3 flex items-center gap-3">
+      <button onclick="showScreen('home')" class="text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="font-semibold text-lg">Retrait</span>
+    </header>
+    <div class="px-4 pt-6">
+      <div class="glass rounded-2xl p-5 space-y-4">
+        <p class="text-sm text-gray-400">Minimum de retrait : <span class="text-brand-400 font-semibold">4 000 XOF</span></p>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Pays</label>
+          <select id="wit-country" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white focus:outline-none focus:border-brand-500">
+            <option value="CI">Côte d'Ivoire</option>
+            <option value="BJ">Bénin</option>
+            <option value="SN">Sénégal</option>
+            <option value="TG">Togo</option>
+            <option value="GA">Gabon</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Numéro de téléphone</label>
+          <input id="wit-phone" type="tel" placeholder="07 12 34 56 78" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Email</label>
+          <input id="wit-email" type="email" placeholder="email@exemple.com" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Montant (XOF)</label>
+          <input id="wit-amount" type="number" min="4000" placeholder="4000" class="w-full px-4 py-3 rounded-xl bg-dark-900 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500" />
+        </div>
+        <button onclick="submitWithdraw()" class="w-full btn-primary py-3.5 rounded-xl font-semibold">Demander le retrait</button>
+        <p id="wit-msg" class="text-sm text-center hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-revenus" class="screen">
+    <header class="sticky top-0 z-50 glass px-4 py-3">
+      <span class="font-semibold text-lg">Revenus</span>
+    </header>
+    <div class="px-4 pt-6 space-y-4">
+      <div class="glass rounded-2xl p-5 text-center">
+        <div class="text-xs text-gray-400 uppercase mb-1">Revenus d'aujourd'hui</div>
+        <div id="rev-today" class="text-2xl font-bold text-brand-400">0.00 XOF</div>
+      </div>
+      <div class="glass rounded-2xl p-5 text-center">
+        <div class="text-xs text-gray-400 uppercase mb-1">Revenus totaux</div>
+        <div id="rev-total" class="text-2xl font-bold">0.00 XOF</div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <h3 class="font-semibold mb-3">Historique</h3>
+        <p class="text-sm text-gray-500 text-center py-6">Aucun revenu pour le moment.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-mien" class="screen">
+    <header class="sticky top-0 z-50 glass px-4 py-3">
+      <span class="font-semibold text-lg">Mon compte</span>
+    </header>
+    <div class="px-4 pt-6 space-y-4">
+      <div class="glass rounded-2xl p-5">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-14 h-14 rounded-full bg-brand-600/30 border border-brand-500/40 flex items-center justify-center text-xl font-bold text-brand-400">U</div>
+          <div>
+            <div id="mien-name" class="font-semibold">Utilisateur</div>
+            <div id="mien-phone" class="text-sm text-gray-400">—</div>
+          </div>
+        </div>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between py-2 border-b border-white/5">
+            <span class="text-gray-400">Solde</span>
+            <span id="mien-balance" class="font-semibold text-brand-400">0.00 XOF</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-white/5">
+            <span class="text-gray-400">Drones actifs</span>
+            <span id="mien-drones" class="font-semibold">0</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="showScreen('deposit')" class="w-full glass py-3 rounded-xl text-sm font-medium">Faire un dépôt</button>
+      <button onclick="showScreen('withdraw')" class="w-full glass py-3 rounded-xl text-sm font-medium">Demander un retrait</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="flex items-center justify-around py-2">
+      <button onclick="showScreen('home')" id="nav-home" class="nav-item active flex flex-col items-center gap-0.5 py-1 px-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span class="text-[10px] font-medium">Accueil</span>
+      </button>
+      <button onclick="showScreen('revenus')" id="nav-revenus" class="nav-item flex flex-col items-center gap-0.5 py-1 px-4 text-gray-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[10px] font-medium">Revenus</span>
+      </button>
+      <button onclick="showScreen('mien')" id="nav-mien" class="nav-item flex flex-col items-center gap-0.5 py-1 px-4 text-gray-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <span class="text-[10px] font-medium">Mien</span>
+      </button>
+    </div>
+  </nav>
+
+  <script src="js/supabase.js"></script>
+  <script>
+    let user = JSON.parse(localStorage.getItem('velys_user') || 'null') || {
+      balance: 0, todayIncome: 0, totalIncome: 0, drones: [], name: 'Utilisateur', phone: ''
+    };
+
+    function saveUser() {
+      localStorage.setItem('velys_user', JSON.stringify(user));
+      updateUI();
+    }
+
+    function updateUI() {
+      const bal = Number(user.balance || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 });
+      document.getElementById('balance').textContent = bal;
+      document.getElementById('todayIncome').textContent = Number(user.todayIncome || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 });
+      document.getElementById('totalIncome').textContent = Number(user.totalIncome || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 });
+      document.getElementById('rev-today').textContent = Number(user.todayIncome || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' XOF';
+      document.getElementById('rev-total').textContent = Number(user.totalIncome || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' XOF';
+      document.getElementById('mien-balance').textContent = bal + ' XOF';
+      document.getElementById('mien-drones').textContent = (user.drones || []).length;
+      document.getElementById('mien-name').textContent = user.name || 'Utilisateur';
+      document.getElementById('mien-phone').textContent = user.phone || '—';
+      renderProducts();
+    }
+
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + name).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.add('text-gray-400'); });
+      const navMap = { home: 'nav-home', revenus: 'nav-revenus', mien: 'nav-mien' };
+      if (navMap[name]) {
+        const el = document.getElementById(navMap[name]);
+        el.classList.add('active');
+        el.classList.remove('text-gray-400');
+      }
+      window.scrollTo(0, 0);
+    }
+
+    const products = [
+      { id: 'vd1', name: 'VelysDrone Mini', badge: 'Débutant', daily: 2050, total: 4100, cycle: 2, price: 3000, quota: '0/50',
+        image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=500&h=300&fit=crop', desc: 'Drone compact idéal pour démarrer' },
+      { id: 'vd2', name: 'VelysDrone Air', badge: 'Standard', daily: 1200, total: 21600, cycle: 18, price: 10000, quota: '0/40',
+        image: 'https://images.unsplash.com/photo-1507582020474-9a35b7c9b0e8?w=500&h=300&fit=crop', desc: 'Drone polyvalent moyenne portée' },
+      { id: 'vd3', name: 'VelysDrone Pro', badge: 'Avancé', daily: 3500, total: 105000, cycle: 30, price: 30000, quota: '0/30',
+        image: 'https://images.unsplash.com/photo-1527977966376-1c840a904ebb?w=500&h=300&fit=crop', desc: 'Drone professionnel haute stabilité' },
+      { id: 'vd4', name: 'VelysDrone Max', badge: 'Pro', daily: 9000, total: 540000, cycle: 60, price: 80000, quota: '0/20',
+        image: 'https://images.unsplash.com/photo-1579829366248-204fe8413f31?w=500&h=300&fit=crop', desc: 'Drone longue autonomie' },
+      { id: 'vd5', name: 'VelysDrone Elite', badge: 'Elite', daily: 18000, total: 1620000, cycle: 90, price: 150000, quota: '0/15',
+        image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=500&h=300&fit=crop&sat=-50', desc: 'Drone premium capteurs avancés' },
+      { id: 'vd6', name: 'VelysDrone Ultimate', badge: 'Ultimate', daily: 45000, total: 8100000, cycle: 180, price: 300000, quota: '0/10',
+        image: 'https://images.unsplash.com/photo-1507582020474-9a35b7c9b0e8?w=500&h=300&fit=crop&sat=-30', desc: 'Drone haut de gamme performance max' }
+    ];
+
+    function renderProducts() {
+      const list = document.getElementById('productsList');
+      const bal = Number(user.balance || 0);
+      list.innerHTML = products.map(p => {
+        const canInvest = bal >= p.price;
+        return `<div class="product-card rounded-2xl overflow-hidden">
+          <div class="relative h-40">
+            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy"
+                 onerror="this.src='https://placehold.co/500x300/0a0e13/10b981?text=${encodeURIComponent(p.name)}'" />
+            <div class="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-brand-600/90 text-[10px] font-semibold">${p.badge}</div>
+            <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-black/60 text-[10px]">${p.quota}</div>
+          </div>
+          <div class="p-4">
+            <h3 class="font-semibold text-base mb-1">${p.name}</h3>
+            <p class="text-xs text-gray-500 mb-3">${p.desc}</p>
+            <div class="grid grid-cols-2 gap-2 text-sm mb-4">
+              <div class="bg-dark-900/50 rounded-lg px-3 py-2"><div class="text-[10px] text-gray-500">Revenu quotidien</div><div class="font-semibold text-brand-400">${p.daily.toLocaleString('fr-FR')} XOF</div></div>
+              <div class="bg-dark-900/50 rounded-lg px-3 py-2"><div class="text-[10px] text-gray-500">Revenu total</div><div class="font-semibold">${p.total.toLocaleString('fr-FR')} XOF</div></div>
+              <div class="bg-dark-900/50 rounded-lg px-3 py-2"><div class="text-[10px] text-gray-500">Cycle</div><div class="font-semibold">${p.cycle} jours</div></div>
+              <div class="bg-dark-900/50 rounded-lg px-3 py-2"><div class="text-[10px] text-gray-500">Investissement</div><div class="font-semibold">${p.price.toLocaleString('fr-FR')} XOF</div></div>
+            </div>
+            <button onclick="invest('${p.id}')" class="w-full btn-primary py-3 rounded-xl text-sm font-semibold ${canInvest ? '' : 'opacity-60'}">
+              ${canInvest ? 'Investir maintenant' : 'Solde insuffisant — Déposer'}
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function invest(productId) {
+      const p = products.find(x => x.id === productId);
+      if (!p) return;
+      const bal = Number(user.balance || 0);
+      if (bal < p.price) {
+        alert('Solde insuffisant. Vous avez ' + bal.toLocaleString('fr-FR') + ' XOF. Déposez au moins ' + p.price.toLocaleString('fr-FR') + ' XOF pour investir dans ' + p.name + '.');
+        showScreen('deposit');
+        return;
+      }
+      user.balance = bal - p.price;
+      user.drones = user.drones || [];
+      user.drones.push({ id: p.id, name: p.name, price: p.price, daily: p.daily, boughtAt: Date.now() });
+      saveUser();
+      alert('Investissement réussi ! Vous avez acquis ' + p.name + '.');
+      showScreen('home');
+    }
+
+    async function submitDeposit() {
+      const phone = document.getElementById('dep-phone').value.trim();
+      const email = document.getElementById('dep-email').value.trim();
+      const amount = Number(document.getElementById('dep-amount').value);
+      const country = document.getElementById('dep-country')?.value || 'CI';
+      const msg = document.getElementById('dep-msg');
+      msg.classList.remove('hidden');
+      msg.textContent = 'Traitement en cours...';
+      msg.className = 'text-sm text-center text-gray-400';
+      if (!phone || !email) { msg.textContent = 'Veuillez remplir tous les champs.'; msg.className = 'text-sm text-center text-red-400'; return; }
+      if (!amount || amount < 3000) { msg.textContent = 'Le montant minimum est de 3 000 XOF.'; msg.className = 'text-sm text-center text-red-400'; return; }
+      try {
+        const res = await fetch('https://sfbomfhtepgffurzmoji.supabase.co/functions/v1/saspay-deposit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, email, amount, country })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) { msg.textContent = data.error || 'Erreur lors du dépôt'; msg.className = 'text-sm text-center text-red-400'; return; }
+        if (data.checkout_url) {
+          msg.textContent = 'Redirection vers le paiement...'; msg.className = 'text-sm text-center text-brand-400';
+          localStorage.setItem('velys_pending_deposit', JSON.stringify({ amount, phone, email }));
+          window.location.href = data.checkout_url; return;
+        }
+        msg.textContent = data.message || 'Demande de dépôt envoyée.';
+        msg.className = 'text-sm text-center text-brand-400';
+        user.phone = phone; saveUser();
+      } catch (e) { console.error(e); msg.textContent = 'Erreur réseau.'; msg.className = 'text-sm text-center text-red-400'; }
+    }
+
+    async function submitWithdraw() {
+      const phone = document.getElementById('wit-phone').value.trim();
+      const email = document.getElementById('wit-email').value.trim();
+      const amount = Number(document.getElementById('wit-amount').value);
+      const country = document.getElementById('wit-country')?.value || 'CI';
+      const msg = document.getElementById('wit-msg');
+      msg.classList.remove('hidden');
+      msg.textContent = 'Traitement en cours...';
+      msg.className = 'text-sm text-center text-gray-400';
+      if (!phone || !email) { msg.textContent = 'Veuillez remplir tous les champs.'; msg.className = 'text-sm text-center text-red-400'; return; }
+      if (!amount || amount < 4000) { msg.textContent = 'Le montant minimum est de 4 000 XOF.'; msg.className = 'text-sm text-center text-red-400'; return; }
+      if (amount > Number(user.balance || 0)) { msg.textContent = 'Solde insuffisant pour ce retrait.'; msg.className = 'text-sm text-center text-red-400'; return; }
+      try {
+        const res = await fetch('https://sfbomfhtepgffurzmoji.supabase.co/functions/v1/saspay-withdraw', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, email, amount, country })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) { msg.textContent = data.error || 'Erreur lors du retrait'; msg.className = 'text-sm text-center text-red-400'; return; }
+        user.balance = Number(user.balance || 0) - amount; saveUser();
+        msg.textContent = data.message || 'Demande de retrait initiée.';
+        msg.className = 'text-sm text-center text-brand-400';
+      } catch (e) { console.error(e); msg.textContent = 'Erreur réseau.'; msg.className = 'text-sm text-center text-red-400'; }
+    }
+
+    saveUser();
+  </script>
+</body>
+</html>
