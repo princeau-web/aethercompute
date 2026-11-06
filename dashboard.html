@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — AetherCompute</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            },
+            dark: {
+              800: '#141a21',
+              850: '#0f1419',
+              900: '#0a0e13',
+              950: '#06090c',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { background: #06090c; }
+    .glass {
+      background: rgba(15, 20, 25, 0.7);
+      border: 1px solid rgba(16, 185, 129, 0.1);
+    }
+    .glass:hover { border-color: rgba(16, 185, 129, 0.25); }
+    .btn-primary {
+      background: linear-gradient(135deg, #059669, #10b981);
+    }
+    .btn-primary:hover { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+    .nav-item.active {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border-left: 3px solid #10b981;
+    }
+  </style>
+</head>
+<body class="font-sans text-white antialiased">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-dark-900 border-r border-white/5 flex flex-col fixed h-full z-40">
+      <div class="p-5 border-b border-white/5">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center font-bold">A</div>
+          <div>
+            <div class="font-semibold">AetherCompute</div>
+            <div class="text-[10px] text-gray-500 uppercase tracking-wider">Afrique de l'Ouest</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex-1 p-3 space-y-0.5">
+        <a href="#" class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Tableau de bord
+        </a>
+        <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+          Catalogue GPU
+        </a>
+        <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Portefeuille
+        </a>
+        <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Historique
+        </a>
+        <a href="#" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Paramètres
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-white/5">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-full bg-brand-600/30 border border-brand-500/40 flex items-center justify-center text-sm font-semibold text-brand-400">U</div>
+          <div class="flex-1 min-w-0">
+            <div id="userName" class="text-sm font-medium truncate">Utilisateur</div>
+            <div id="userPhone" class="text-xs text-gray-500 truncate">+225 ...</div>
+          </div>
+        </div>
+        <button id="logoutBtn" class="w-full py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition">
+          Déconnexion
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 ml-64 p-8">
+      <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-2xl font-bold">Tableau de bord</h1>
+          <p class="text-gray-400 text-sm mt-1">Gérez vos instances GPU et votre solde</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="glass px-4 py-2.5 rounded-xl flex items-center gap-3">
+            <div class="text-right">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Solde disponible</div>
+              <div id="balance" class="font-bold text-brand-400 text-lg">0 XOF</div>
+            </div>
+          </div>
+          <button class="btn-primary px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            Recharger
+          </button>
+        </div>
+      </header>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="glass rounded-2xl p-5">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Instances actives</div>
+          <div class="text-3xl font-bold">0</div>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Heures ce mois</div>
+          <div class="text-3xl font-bold">0</div>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Dépenses (XOF)</div>
+          <div class="text-3xl font-bold">0</div>
+        </div>
+        <div class="glass rounded-2xl p-5">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Uptime moyen</div>
+          <div class="text-3xl font-bold text-brand-400">99.9%</div>
+        </div>
+      </div>
+
+      <!-- GPU Catalog -->
+      <section class="mb-10">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-lg font-semibold">Catalogue GPU</h2>
+          <div class="flex gap-2 text-xs">
+            <button class="px-3 py-1.5 rounded-lg bg-brand-600/20 text-brand-400 border border-brand-500/30">Tous</button>
+            <button class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white border border-transparent hover:border-white/10">NVIDIA</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="gpuGrid">
+          <!-- Loaded dynamically from Supabase -->
+        </div>
+      </section>
+
+      <!-- Active instances -->
+      <section>
+        <h2 class="text-lg font-semibold mb-5">Instances actives</h2>
+        <div class="glass rounded-2xl overflow-hidden">
+          <div class="p-8 text-center text-gray-500 text-sm">
+            Aucune instance en cours. Louez un GPU pour commencer.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/supabase.js"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem('aether_user') || '{}');
+    if (!user.loggedIn) {
+      window.location.href = 'index.html';
+    } else {
+      document.getElementById('userName').textContent = user.name || 'Utilisateur';
+      document.getElementById('userPhone').textContent = user.phone || '';
+      const bal = user.balance || 0;
+      document.getElementById('balance').textContent = bal.toLocaleString('fr-FR') + ' XOF';
+    }
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('aether_user');
+      window.location.href = 'index.html';
+    });
+
+    // Load GPUs from Supabase
+    async function renderGpus() {
+      const grid = document.getElementById('gpuGrid');
+      if (!grid) return;
+      grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">Chargement du catalogue...</div>';
+      const gpus = await window.AetherDB.fetchGpus();
+      if (!gpus.length) {
+        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">Aucun GPU disponible pour le moment.</div>';
+        return;
+      }
+      grid.innerHTML = gpus.map(g => `
+        <div class="glass rounded-2xl p-5 flex flex-col">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="font-semibold text-lg">${g.name}</h3>
+              <p class="text-xs text-gray-500 mt-0.5">${g.vram_gb} GB · ${g.vendor}</p>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-medium rounded-full bg-brand-500/15 text-brand-400 border border-brand-500/20">Disponible</span>
+          </div>
+          <div class="space-y-1.5 text-sm text-gray-400 mb-5 flex-1">
+            <div class="flex justify-between"><span>VRAM</span><span class="text-white">${g.vram_gb} GB</span></div>
+            <div class="flex justify-between"><span>Région</span><span class="text-white">${g.region || 'AF-West'}</span></div>
+            <div class="flex justify-between"><span>Devise</span><span class="text-white">${g.currency || 'XOF'}</span></div>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/5">
+            <div>
+              <span class="text-xl font-bold">${Number(g.price_per_hour).toLocaleString('fr-FR')}</span>
+              <span class="text-sm text-gray-400"> XOF/h</span>
+            </div>
+            <button class="btn-primary px-4 py-2 rounded-lg text-sm font-medium" data-gpu="${g.slug}">Louer</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    renderGpus();
+  </script>
+</body>
+</html>
