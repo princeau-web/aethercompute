@@ -1,37 +1,38 @@
 # AetherCompute
 
-Plateforme de location de puissance de calcul IA (GPU) destinée à l'Afrique de l'Ouest.
+Plateforme de location de puissance de calcul IA (GPU) pour l'Afrique de l'Ouest.
 
-**Pays supportés :** Côte d'Ivoire 🇨🇮 · Gabon 🇬🇦 · Togo 🇹🇬 · Sénégal 🇸🇳 · Bénin 🇧🇯
-
+**Pays supportés :** Côte d'Ivoire 🇨🇮 · Gabon 🇬🇦 · Togo 🇹🇬 · Sénégal 🇸🇳 · Bénin 🇧🇯  
 **Devise :** XOF (Franc CFA)
 
-## Fonctionnalités
+## Liens
 
-- Authentification par numéro de téléphone (codes pays ciblés)
-- Catalogue GPU (RTX 4090, 3090, A100, H100, L40S...)
-- Portefeuille & solde en XOF
-- Dashboard instances
-- Design sombre premium, orienté Afrique de l'Ouest
+- **Repo :** https://github.com/princeau-web/aethercompute
+- **Supabase Project :** `aethercompute` (`sfbomfhtepgffurzmoji`)
+- **Region :** eu-west-3 (Paris)
+- **API URL :** https://sfbomfhtepgffurzmoji.supabase.co
+
+> ⚠️ Ne jamais utiliser le projet PageSecret pour AetherCompute.
 
 ## Stack
 
-- Frontend : HTML + Tailwind CSS + JS vanilla (prêt pour migration Next.js / React)
+- Frontend : HTML + Tailwind CSS + JS
 - Backend / DB : Supabase (PostgreSQL + Auth + RLS)
-- Repo : GitHub
+- Client : `@supabase/supabase-js` (CDN)
 
-## Base de données (Supabase)
+## Base de données
 
-Tables créées :
-- `profiles` — utilisateurs + solde
-- `gpu_catalog` — catalogue des GPU
-- `instances` — locations actives
-- `transactions` — historique portefeuille
+| Table | Description |
+|-------|-------------|
+| `profiles` | Utilisateurs + solde XOF |
+| `gpu_catalog` | Catalogue GPU (seedé) |
+| `instances` | Locations / instances |
+| `transactions` | Historique portefeuille |
 
-## Lancer localement
+## Lancer en local
 
 ```bash
-# Serveur simple
+cd aethercompute
 python3 -m http.server 8080
 # ou
 npx serve .
@@ -39,11 +40,23 @@ npx serve .
 
 Ouvrir http://localhost:8080
 
+## Structure
+
+```
+aethercompute/
+├── index.html          # Login / Inscription
+├── dashboard.html      # Dashboard + catalogue GPU (chargé depuis Supabase)
+├── js/
+│   ├── auth.js         # Auth mock (localStorage)
+│   └── supabase.js     # Client Supabase + fetchGpus()
+└── README.md
+```
+
 ## Prochaines étapes
 
-- [ ] Intégration complète Supabase Auth (OTP SMS)
-- [ ] Moyens de paiement (Mobile Money, cartes, crypto)
-- [ ] Provisioning réel des instances
+- [ ] Supabase Auth (OTP SMS / téléphone)
+- [ ] Moyens de paiement (Mobile Money, Wave, cartes)
+- [ ] Création réelle d'instances
 - [ ] Dashboard admin
 
 ---
