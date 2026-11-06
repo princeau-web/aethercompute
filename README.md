@@ -1,35 +1,38 @@
-# AeroNova (AetherCompute)
+# VelysDrone
 
-Plateforme d'investissement VIP pour l'Afrique de l'Ouest.
+Plateforme d'investissement dans une flotte de drones — Afrique de l'Ouest.
 
-**Pays :** Côte d'Ivoire · Gabon · Togo · Sénégal · Bénin  
-**Devise :** XOF
+**Devise :** XOF  
+**Dépôt min :** 3 000 XOF  
+**Retrait min :** 4 000 XOF  
 
-## Interface
+## Règles métier
 
-- Menu horizontal **fixe en bas** (Accueil / Revenus / Équipe / Mien)
-- Solde + Dépôt / Retrait
-- Liste des plans VIP avec images
-- Design mobile-first sombre
+- À l'inscription le solde est **0 XOF**
+- L'utilisateur ne peut investir dans un drone que si son solde ≥ prix du drone
+- Sinon le bouton l'envoie vers le dépôt
 
-## Plans VIP proposés (6 max)
+## Flotte (6 niveaux)
 
-| VIP | Investissement | Revenu quotidien | Cycle | Revenu total | Badge |
-|-----|----------------|------------------|-------|--------------|-------|
-| VP1 | 3 000 XOF | 2 050 XOF | 2 jours | 4 100 XOF | Débutant |
-| VP2 | 10 000 XOF | 1 200 XOF | 18 jours | 21 600 XOF | Standard |
-| VP3 | 30 000 XOF | 3 500 XOF | 30 jours | 105 000 XOF | Avancé |
-| VP4 | 80 000 XOF | 9 000 XOF | 60 jours | 540 000 XOF | Pro |
-| VP5 | 150 000 XOF | 18 000 XOF | 90 jours | 1 620 000 XOF | Elite |
-| VP6 | 300 000 XOF | 45 000 XOF | 180 jours | 8 100 000 XOF | Ultimate |
-
-> VP1 respecte ta demande : min 3 000 XOF → 4 100 XOF en 2 jours.
+| Drone | Investissement | Revenu / jour | Cycle | Total |
+|-------|----------------|---------------|-------|-------|
+| VelysDrone Mini | 3 000 | 2 050 | 2 j | 4 100 |
+| VelysDrone Air | 10 000 | 1 200 | 18 j | 21 600 |
+| VelysDrone Pro | 30 000 | 3 500 | 30 j | 105 000 |
+| VelysDrone Max | 80 000 | 9 000 | 60 j | 540 000 |
+| VelysDrone Elite | 150 000 | 18 000 | 90 j | 1 620 000 |
+| VelysDrone Ultimate | 300 000 | 45 000 | 180 j | 8 100 000 |
 
 ## Stack
 
 - Frontend HTML + Tailwind
 - Supabase projet `aethercompute` (`sfbomfhtepgffurzmoji`)
-- Repo : https://github.com/princeau-web/aethercompute
+- Paiements : SasPay (softpay + payout) via Edge Functions
+
+## Edge Functions
+
+- `saspay-deposit` — encaissement
+- `saspay-withdraw` — retrait
 
 ## Lancer
 
@@ -38,4 +41,4 @@ python3 -m http.server 8080
 ```
 
 ---
-© 2026 AeroNova / AetherCompute
+© 2026 VelysDrone
