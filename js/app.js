@@ -150,16 +150,20 @@ function doLogin() {
     msg.className = 'text-sm text-center text-red-400';
     return;
   }
-  const existing = loadUser();
-  if (existing && existing.phone && existing.phone.replace(/\s/g, '') === fullKey) {
-    user = existing; user.loggedIn = true;
+  let storedProfile = null;
+  try { storedProfile = JSON.parse(localStorage.getItem('velys_user_' + fullKey) || 'null'); } catch (e) {}
+  if (storedProfile) {
+    user = { ...storedProfile, loggedIn: true, secret: entry.secret, name: entry.name || storedProfile.name, phone: entry.phone, avatar: entry.avatar || storedProfile.avatar };
   } else {
-    user = {
-      loggedIn: true, phone: entry.phone, name: entry.name, secret: entry.secret, avatar: entry.avatar,
-      balance: existing && existing.phone === entry.phone ? existing.balance : 0,
-      todayIncome: existing?.todayIncome || 0, totalIncome: existing?.totalIncome || 0,
-      drones: existing?.drones || [], transactions: existing?.transactions || [], country: 'CI'
-    };
+    const existing = loadUser();
+    if (existing && existing.phone && existing.phone.replace(/\s/g, '') === fullKey) {
+      user = existing; user.loggedIn = true;
+    } else {
+      user = {
+        loggedIn: true, phone: entry.phone, name: entry.name, secret: entry.secret, avatar: entry.avatar,
+        balance: 0, todayIncome: 0, totalIncome: 0, drones: [], transactions: [], country: 'CI'
+      };
+    }
   }
   saveUser();
   showScreen('home');
@@ -214,17 +218,18 @@ function renderHistory() {
     const sign = t.type === 'deposit' || t.type === 'income' ? '+' : '−';
     const color = t.type === 'deposit' || t.type === 'income' ? 'text-sky-400' : 'text-orange-400';
     const label = { deposit: 'Dépôt', withdraw: 'Retrait', invest: 'Investissement', income: 'Revenu' }[t.type] || t.type;
-    return `<div class="flex justify-between items-center py-2.5 border-b border-white/5"><div><div class="font-medium">${label}${t.name ? ' · ' + t.name : ''}</div><div class="text-[11px] text-gray-500">${dateStr}</div></div><div class="font-semibold ${color}">${sign}${Number(t.amount).toLocaleString('fr-FR')} XOF</div></div>`;
+    const st = t.status === 'en_cours' ? ' <span class="text-orange-400">(en cours)</span>' : (t.status === 'completed' ? ' <span class="text-emerald-400">(terminé)</span>' : '');
+    return `<div class="flex justify-between items-center py-2.5 border-b border-white/5"><div><div class="font-medium">${label}${t.name ? ' · ' + t.name : ''}${st}</div><div class="text-[11px] text-gray-500">${dateStr}</div></div><div class="font-semibold ${color}">${sign}${Number(t.amount).toLocaleString('fr-FR')} XOF</div></div>`;
   }).join('');
 }
 
 const products = [
-  { id: 'vd1', name: 'VelysDrone Mini', badge: 'Débutant', daily: 2050, total: 4100, cycle: 2, price: 3000, image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Drone compact — parfait pour démarrer' },
-  { id: 'vd2', name: 'VelysDrone Air', badge: 'Standard', daily: 1200, total: 21600, cycle: 18, price: 10000, image: 'https://images.unsplash.com/photo-1507582020474-9a35b7c9b0e8?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Polyvalent, moyenne portée' },
-  { id: 'vd3', name: 'VelysDrone Pro', badge: 'Avancé', daily: 3500, total: 105000, cycle: 30, price: 30000, image: 'https://images.unsplash.com/photo-1527977966376-1c840a904ebb?w=800&h=450&fit=crop&q=80', desc: 'Stabilité pro, missions prolongées' },
-  { id: 'vd4', name: 'VelysDrone Max', badge: 'Pro', daily: 9000, total: 540000, cycle: 60, price: 80000, image: 'https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Longue autonomie, grand rayon' },
-  { id: 'vd5', name: 'VelysDrone Elite', badge: 'Elite', daily: 18000, total: 1620000, cycle: 90, price: 150000, image: 'https://images.unsplash.com/photo-1506947411487-a56738267384?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Capteurs avancés, performance elite' },
-  { id: 'vd6', name: 'VelysDrone Ultimate', badge: 'Ultimate', daily: 45000, total: 8100000, cycle: 180, price: 300000, image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Haut de gamme — rendement maximal' }
+  { id: 'vd1', name: 'VelysDrone Mini', badge: 'Débutant', daily: 2050, total: 4100, cycle: 2, price: 3000, image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Drone compact' },
+  { id: 'vd2', name: 'VelysDrone Air', badge: 'Standard', daily: 1200, total: 21600, cycle: 18, price: 10000, image: 'https://images.unsplash.com/photo-1507582020474-9a35b7c9b0e8?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Polyvalent' },
+  { id: 'vd3', name: 'VelysDrone Pro', badge: 'Avancé', daily: 3500, total: 105000, cycle: 30, price: 30000, image: 'https://images.unsplash.com/photo-1527977966376-1c840a904ebb?w=800&h=450&fit=crop&q=80', desc: 'Professionnel' },
+  { id: 'vd4', name: 'VelysDrone Max', badge: 'Pro', daily: 9000, total: 540000, cycle: 60, price: 80000, image: 'https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Longue autonomie' },
+  { id: 'vd5', name: 'VelysDrone Elite', badge: 'Elite', daily: 18000, total: 1620000, cycle: 90, price: 150000, image: 'https://images.unsplash.com/photo-1506947411487-a56738267384?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Performance elite' },
+  { id: 'vd6', name: 'VelysDrone Ultimate', badge: 'Ultimate', daily: 45000, total: 8100000, cycle: 180, price: 300000, image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&h=450&q=80', desc: 'Haut de gamme' }
 ];
 
 function renderProducts() {
@@ -244,8 +249,8 @@ function invest(id) {
   if (bal < p.price) { alert('Solde insuffisant.'); showScreen('deposit'); return; }
   user.balance = bal - p.price;
   user.drones = user.drones || [];
-  user.drones.push({ id: p.id, name: p.name, price: p.price, daily: p.daily, boughtAt: Date.now() });
-  addTx('invest', p.price, { name: p.name });
+  user.drones.push({ id: p.id, name: p.name, price: p.price, daily: p.daily, boughtAt: Date.now(), status: 'en_cours' });
+  addTx('invest', p.price, { name: p.name, status: 'en_cours' });
   saveUser();
   alert('Drone acquis : ' + p.name);
   showScreen('home');
