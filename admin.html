@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VelysDrone — Administration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: { 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7' },
+            brand: { 500: '#06b6d4' },
+            night: { 800: '#0c1524', 900: '#070e1a', 950: '#040810' }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { background: #040810; }
+    .glass { background: rgba(12,21,36,0.9); border: 1px solid rgba(56,189,248,0.12); }
+    .btn-primary { background: linear-gradient(135deg, #0284c7, #06b6d4); }
+    .sidebar a.active { background: rgba(14,165,233,0.15); color: #38bdf8; border-left: 3px solid #0ea5e9; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+  </style>
+</head>
+<body class="font-sans text-white antialiased min-h-screen">
+
+  <div id="login-view" class="min-h-screen flex items-center justify-center px-4">
+    <div class="glass rounded-2xl p-8 w-full max-w-md">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-brand-500 flex items-center justify-center font-bold">V</div>
+        <div>
+          <div class="font-bold text-lg">VelysDrone Admin</div>
+          <div class="text-xs text-gray-400">Espace d'administration</div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Email</label>
+          <input id="admin-email" type="email" class="w-full px-4 py-3 rounded-xl bg-night-900 border border-sky-500/20 text-white" placeholder="admin@email.com" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1.5">Mot de passe</label>
+          <input id="admin-password" type="password" class="w-full px-4 py-3 rounded-xl bg-night-900 border border-sky-500/20 text-white" placeholder="••••••••" />
+        </div>
+        <button onclick="adminLogin()" class="w-full btn-primary py-3 rounded-xl font-semibold">Se connecter</button>
+        <p id="admin-login-msg" class="text-sm text-center text-red-400 hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-view" class="hidden min-h-screen flex">
+    <aside class="sidebar w-56 shrink-0 glass border-r border-sky-500/10 min-h-screen p-4 flex flex-col">
+      <div class="flex items-center gap-2 mb-8 px-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-brand-500 flex items-center justify-center text-sm font-bold">V</div>
+        <span class="font-semibold">Admin</span>
+      </div>
+      <nav class="space-y-1 flex-1">
+        <a href="#" onclick="showPanel('dashboard');return false" id="nav-dashboard" class="active block px-3 py-2.5 rounded-lg text-sm">Tableau de bord</a>
+        <a href="#" onclick="showPanel('users');return false" id="nav-users" class="block px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white">Utilisateurs</a>
+        <a href="#" onclick="showPanel('deposits');return false" id="nav-deposits" class="block px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white">Dépôts</a>
+        <a href="#" onclick="showPanel('withdrawals');return false" id="nav-withdrawals" class="block px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white">Retraits</a>
+        <a href="#" onclick="showPanel('investments');return false" id="nav-investments" class="block px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white">Investissements</a>
+        <a href="#" onclick="showPanel('products');return false" id="nav-products" class="block px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white">Produits</a>
+        <a href="#" onclick="showPanel('settings');return false" id="nav-settings" class="block px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white">Paramètres</a>
+      </nav>
+      <button onclick="adminLogout()" class="text-left px-3 py-2 text-sm text-red-400 hover:text-red-300">Déconnexion</button>
+    </aside>
+
+    <main class="flex-1 p-6 overflow-auto">
+      <div id="panel-dashboard" class="panel active">
+        <h1 class="text-2xl font-bold mb-6">Tableau de bord</h1>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div class="glass rounded-xl p-4"><div class="text-xs text-gray-400 uppercase mb-1">Utilisateurs</div><div id="stat-users" class="text-2xl font-bold text-sky-400">0</div></div>
+          <div class="glass rounded-xl p-4"><div class="text-xs text-gray-400 uppercase mb-1">Solde total (XOF)</div><div id="stat-balance" class="text-2xl font-bold">0</div></div>
+          <div class="glass rounded-xl p-4"><div class="text-xs text-gray-400 uppercase mb-1">Dépôts (succès)</div><div id="stat-deposits" class="text-2xl font-bold text-emerald-400">0</div></div>
+          <div class="glass rounded-xl p-4"><div class="text-xs text-gray-400 uppercase mb-1">Retraits en attente</div><div id="stat-withdrawals" class="text-2xl font-bold text-orange-400">0</div></div>
+        </div>
+        <div class="glass rounded-xl p-5"><h2 class="font-semibold mb-3">Activité récente</h2><div id="recent-activity" class="text-sm text-gray-400">Aucune activité.</div></div>
+      </div>
+
+      <div id="panel-users" class="panel">
+        <div class="flex items-center justify-between mb-6"><h1 class="text-2xl font-bold">Utilisateurs</h1><button onclick="loadUsers()" class="text-sm text-sky-400">Actualiser</button></div>
+        <div class="glass rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-night-900/80 text-gray-400 text-left"><tr><th class="px-4 py-3">Nom</th><th class="px-4 py-3">Téléphone</th><th class="px-4 py-3">Solde</th><th class="px-4 py-3">Drones</th><th class="px-4 py-3">Actions</th></tr></thead><tbody id="users-tbody"></tbody></table></div></div>
+      </div>
+
+      <div id="panel-deposits" class="panel">
+        <div class="flex items-center justify-between mb-6"><h1 class="text-2xl font-bold">Dépôts</h1><button onclick="loadDeposits()" class="text-sm text-sky-400">Actualiser (Supabase)</button></div>
+        <div class="glass rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-night-900/80 text-gray-400 text-left"><tr><th class="px-4 py-3">Date</th><th class="px-4 py-3">Téléphone</th><th class="px-4 py-3">Montant</th><th class="px-4 py-3">Réseau</th><th class="px-4 py-3">Statut</th><th class="px-4 py-3">Payment ID</th><th class="px-4 py-3">Actions</th></tr></thead><tbody id="deposits-tbody"></tbody></table></div></div>
+      </div>
+
+      <div id="panel-withdrawals" class="panel">
+        <div class="flex items-center justify-between mb-6"><h1 class="text-2xl font-bold">Retraits</h1><button onclick="loadWithdrawals()" class="text-sm text-sky-400">Actualiser</button></div>
+        <div class="glass rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-night-900/80 text-gray-400 text-left"><tr><th class="px-4 py-3">Date</th><th class="px-4 py-3">Téléphone</th><th class="px-4 py-3">Montant</th><th class="px-4 py-3">Pays</th><th class="px-4 py-3">Statut</th><th class="px-4 py-3">Actions</th></tr></thead><tbody id="withdrawals-tbody"></tbody></table></div></div>
+      </div>
+
+      <div id="panel-investments" class="panel">
+        <h1 class="text-2xl font-bold mb-6">Investissements</h1>
+        <div class="glass rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-night-900/80 text-gray-400 text-left"><tr><th class="px-4 py-3">Utilisateur</th><th class="px-4 py-3">Drone</th><th class="px-4 py-3">Prix</th><th class="px-4 py-3">Revenu/jour</th><th class="px-4 py-3">Achété le</th></tr></thead><tbody id="invest-tbody"></tbody></table></div></div>
+      </div>
+
+      <div id="panel-products" class="panel">
+        <h1 class="text-2xl font-bold mb-6">Catalogue drones</h1>
+        <div id="products-admin" class="grid gap-4 md:grid-cols-2"></div>
+      </div>
+
+      <div id="panel-settings" class="panel">
+        <h1 class="text-2xl font-bold mb-6">Paramètres</h1>
+        <div class="glass rounded-xl p-5 space-y-4 max-w-lg">
+          <div><label class="block text-sm text-gray-300 mb-1">Min dépôt (XOF)</label><input id="set-min-deposit" type="number" value="3000" class="w-full px-4 py-2 rounded-lg bg-night-900 border border-sky-500/20" /></div>
+          <div><label class="block text-sm text-gray-300 mb-1">Min retrait (XOF)</label><input id="set-min-withdraw" type="number" value="4000" class="w-full px-4 py-2 rounded-lg bg-night-900 border border-sky-500/20" /></div>
+          <button onclick="saveSettings()" class="btn-primary px-6 py-2.5 rounded-lg text-sm font-semibold">Enregistrer</button>
+          <p id="settings-msg" class="text-sm text-sky-400 hidden"></p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal-credit" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 px-4">
+    <div class="glass rounded-2xl p-6 w-full max-w-md">
+      <h3 class="font-semibold text-lg mb-4">Créditer un solde</h3>
+      <p class="text-sm text-gray-400 mb-2">Utilisateur : <span id="credit-user-label" class="text-white"></span></p>
+      <input type="hidden" id="credit-phone-key" />
+      <div class="mb-4"><label class="block text-sm mb-1">Montant (XOF)</label><input id="credit-amount" type="number" min="1" class="w-full px-4 py-2 rounded-lg bg-night-900 border border-sky-500/20" /></div>
+      <div class="flex gap-3">
+        <button onclick="confirmCredit()" class="btn-primary flex-1 py-2.5 rounded-lg font-semibold">Créditer</button>
+        <button onclick="closeCreditModal()" class="flex-1 py-2.5 rounded-lg border border-white/10">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
