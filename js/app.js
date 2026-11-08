@@ -3,7 +3,9 @@ const METHODS = {
   BJ: [{ code: 'mtn_bj', label: 'MTN Mobile Money' }, { code: 'moov_bj', label: 'Moov Money' }],
   SN: [{ code: 'wave_sn', label: 'Wave' }, { code: 'orange_sn', label: 'Orange Money' }, { code: 'free_sn', label: 'Free Money' }],
   TG: [{ code: 'moov_tg', label: 'Moov Money' }, { code: 'togocom_tg', label: 'Togocom Mixx' }],
-  GA: [{ code: 'airtel_ga', label: 'Airtel Money' }, { code: 'moov_ga', label: 'Moov Money' }]
+  GA: [{ code: 'airtel_ga', label: 'Airtel Money' }, { code: 'moov_ga', label: 'Moov Money' }],
+  CG: [{ code: 'mtn_cg', label: 'MTN Mobile Money' }, { code: 'airtel_cg', label: 'Airtel Money' }],
+  CD: [{ code: 'orange_cd', label: 'Orange Money' }, { code: 'airtel_cd', label: 'Airtel Money' }, { code: 'mpesa_cd', label: 'M-Pesa' }]
 };
 
 let captchaCode = '';
